@@ -1,0 +1,19 @@
+[Unit]
+Description=Kafka UI API Service
+After=network.target
+
+[Service]
+User=kafka-ui
+Group=kafka-ui
+
+WorkingDirectory=/usr/local/lib/kafka-ui
+
+ExecStart=/usr/bin/java -Dspring.config.additional-location=/etc/kafka-ui/application.yaml --add-opens java.rmi/javax.rmi.ssl=ALL-UNNAMED -jar kafka-ui-api-v0.7.2.jar
+
+Restart=on-failure
+RestartSec=10
+
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target

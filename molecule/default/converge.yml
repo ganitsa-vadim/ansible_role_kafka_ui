@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  gather_facts: false
+
+  roles:
+    - ansible_role_kafka_ui

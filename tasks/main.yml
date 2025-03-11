@@ -58,11 +58,13 @@
     owner: root
     group: kafka-ui
     mode: '0640'
+  notify: restart kafka ui
 
 - name: Deploy systemd unit file
   template:
     src: kafka-ui-api.service.j2
     dest: /etc/systemd/system/kafka-ui-api.service
+  notify: restart kafka ui
     
 - name: Just force systemd to reread configs (2.4 and above)
   ansible.builtin.systemd_service:

@@ -1,0 +1,15 @@
+---
+- name: Create kafka-ui group
+  ansible.builtin.group:
+    name: '{{ kafka_ui_group }}'
+    state: present
+    system: yes
+
+
+- name: Create kafka-ui user
+  ansible.builtin.user:
+    name: '{{ kafka_ui_user }}'
+    group: '{{ kafka_ui_user }}'
+    state: present
+    createhome: no
+    system: yes

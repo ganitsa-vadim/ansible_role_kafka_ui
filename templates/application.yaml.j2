@@ -1,11 +1,33 @@
 server:
   port: {{ kafka_ui_server_port }}
 
+kafka:
+  clusters:
+    - name: {{ kafka_ui_cluster_name }}
+      bootstrapServers: {{ kafka_ui_brokers | join(',') }}
+
+auth:
+  type: DISABLED
+
+management:
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "info,health,prometheus"
+
 dynamic:
   config:
     enabled: true
 
-kafka:
-  clusters:
-    - name: {{ kafka_ui_cluster_name }}
-      bootstrapServers: {{ kafka_ui_bootstrap_server }}
+logging:
+  level:
+    root: INFO
+    com.provectus: DEBUG
+    reactor.netty.http.server.AccessLog: INFO
+    org.hibernate.validator: WARN
+

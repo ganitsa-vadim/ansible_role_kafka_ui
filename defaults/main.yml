@@ -4,3 +4,6 @@
 kafka_ui_server_port: 8080
 kafka_ui_cluster_name: kafka-cluster
 kafka_ui_bootstrap_server: localhost:9092
+
+kafka_ui_user: kafka-ui
+kafka_ui_group: kafka-ui

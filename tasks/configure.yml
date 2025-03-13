@@ -1,0 +1,19 @@
+---
+- name: Deploy Kafka UI configuration file
+  template:
+    src: application.yaml.j2
+    dest: /etc/kafka-ui/application.yaml
+    owner: '{{ kafka_ui.linux.user }}'
+    group: '{{ kafka_ui.linux.group }}'
+    mode: '0755'
+  notify: restart kafka ui
+
+- name: Deploy systemd unit file
+  template:
+    src: kafka-ui.service.j2
+    dest: /etc/systemd/system/kafka-ui.service
+  notify: restart kafka ui
+    
+- name: Just force systemd to reread configs
+  ansible.builtin.systemd_service:
+    daemon_reload: true

@@ -1,4 +1,27 @@
 ---
+- name: Prepare
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Создать директорию /usr/share/man/man1
+      file:
+        path: /usr/share/man/man1
+        state: directory
+        mode: '0755'
+      become: yes
+    - name: Install role develop packages
+      ansible.builtin.apt:
+        pkg:
+          - vim
+          - net-tools
+          - dnsutils
+          - telnet
+          - curl
+        state: present
+        update_cache: yes
+      become: yes
+
 - name: Converge
   hosts: all
   become: true

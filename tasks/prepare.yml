@@ -1,0 +1,40 @@
+---
+- name: Install java17
+  ansible.builtin.apt:
+    name: openjdk-17-jre-headless
+    state: present
+    update_cache: yes
+
+- name: KAFKA | Ensure kafka group
+  ansible.builtin.group:
+    name: "{{ kafka_ui.linux.group }}"
+
+- name: KAFKA | Ensure kafka user
+  ansible.builtin.user:
+    name: "{{ kafka_ui.linux.user }}"
+    group: "{{ kafka_ui.linux.group }}"
+    home: /bin/false
+
+- name: Create a directory /usr/local/lib/kafka-ui
+  ansible.builtin.file:
+    path: /usr/local/lib/kafka-ui
+    state: directory
+    mode: '0750'
+    owner: '{{ kafka_ui.linux.user }}'
+    group: '{{ kafka_ui.linux.group }}'
+
+- name: Download kafka-ui-api JAR
+  get_url:
+    url: "https://github.com/provectus/kafka-ui/releases/download/v0.7.2/kafka-ui-api-v0.7.2.jar"
+    dest: "/usr/local/lib/kafka-ui/kafka-ui-api-v0.7.2.jar"
+    owner: '{{ kafka_ui.linux.user }}'
+    group: '{{ kafka_ui.linux.group }}'
+    mode: '0644'
+
+- name: Create a directory /etc/kafka-ui
+  ansible.builtin.file:
+    path: /etc/kafka-ui
+    state: directory
+    owner: '{{ kafka_ui.linux.user }}'
+    group: '{{ kafka_ui.linux.group }}'
+    mode: '0755'

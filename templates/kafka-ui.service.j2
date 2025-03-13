@@ -3,8 +3,8 @@ Description=Kafka UI API Service
 After=network.target
 
 [Service]
-User=kafka-ui
-Group=kafka-ui
+User={{ kafka_ui.linux.user }}
+Group={{ kafka_ui.linux.group }}
 
 WorkingDirectory=/usr/local/lib/kafka-ui
 

@@ -1,77 +1,16 @@
 ---
-- name: Создать директорию /usr/share/man/man1 (если отсутствует)
-  file:
-    path: /usr/share/man/man1
-    state: directory
-    mode: '0755'
-  become: yes
+- name: Prepare linux host
+  import_tasks: prepare.yml
 
-- name: Install java17
-  ansible.builtin.apt:
-    name: openjdk-17-jre-headless
-    state: present
-    update_cache: yes
-
-- name: Ensure group "kafka-ui" exists
-  ansible.builtin.group:
-    name: kafka-ui
-    state: present
-
-- name: Add the user 'johnd' with a specific uid and a primary group of 'admin'
-  ansible.builtin.user:
-    name: kafka-ui
-    group: kafka-ui
-
-- name: Create kafka-ui user
-  ansible.builtin.user:
-    name: kafka-ui
-    group: kafka-ui
-    shell: /usr/sbin/nologin
-    system: yes
-    state: present
-
-- name: Create a directory /usr/local/lib/kafka-ui
-  ansible.builtin.file:
-    path: /usr/local/lib/kafka-ui
-    state: directory
-    mode: '0750'
-    owner: kafka-ui
-    group: kafka-ui
-
-- name: Download kafka-ui-api JAR
-  get_url:
-    url: "https://github.com/provectus/kafka-ui/releases/download/v0.7.2/kafka-ui-api-v0.7.2.jar"
-    dest: "/usr/local/lib/kafka-ui/kafka-ui-api-v0.7.2.jar"
-    owner: kafka-ui
-    group: kafka-ui
-    mode: '0644'
-
-- name: Create a directory /etc/kafka-ui
-  ansible.builtin.file:
-    path: /etc/kafka-ui
-    state: directory
-
-- name: Deploy Kafka UI configuration file
-  template:
-    src: application.yaml.j2
-    dest: /etc/kafka-ui/application.yaml
-    owner: root
-    group: kafka-ui
-    mode: '0640'
-  notify: restart kafka ui
-
-- name: Deploy systemd unit file
-  template:
-    src: kafka-ui-api.service.j2
-    dest: /etc/systemd/system/kafka-ui-api.service
-  notify: restart kafka ui
-    
-- name: Just force systemd to reread configs (2.4 and above)
-  ansible.builtin.systemd_service:
-    daemon_reload: true
+- name: Configure
+  import_tasks: configure.yml
 
 - name: start kafka ui
   ansible.builtin.systemd_service:
-    name: kafka-ui-api.service
+    name: kafka-ui.service
     state: started
     enabled: true
+
+- name: Check Health of kafka-ui
+  ansible.builtin.uri:
+    url: "http://localhost:{{ kafka_ui.server_port }}"
